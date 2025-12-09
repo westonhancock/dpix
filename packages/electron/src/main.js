@@ -18,14 +18,24 @@ app.whenReady().then(() => {
     browserWindow: {
       width: 400,
       height: 550,
+      minWidth: 400,
+      minHeight: 550,
+      maxWidth: 400,
+      maxHeight: 550,
       resizable: false,
+      frame: false,
+      transparent: false,
+      hasShadow: true,
+      skipTaskbar: true,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
         contextIsolation: true,
         nodeIntegration: false,
+        backgroundThrottling: false,
       },
     },
     preloadWindow: true,
+    showDockIcon: false,
   });
 
   mb.on('ready', () => {
@@ -48,9 +58,19 @@ app.whenReady().then(() => {
   });
 
   mb.on('after-create-window', () => {
-    if (process.env.NODE_ENV === 'development') {
-      mb.window.webContents.openDevTools({ mode: 'detach' });
-    }
+    console.log('Window created');
+    // Always open dev tools for debugging
+    mb.window.webContents.openDevTools({ mode: 'detach' });
+
+    // Log when page finishes loading
+    mb.window.webContents.on('did-finish-load', () => {
+      console.log('Page finished loading');
+    });
+
+    // Log any console messages from renderer
+    mb.window.webContents.on('console-message', (event, level, message) => {
+      console.log(`Renderer console: ${message}`);
+    });
   });
 });
 
