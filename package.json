@@ -1,6 +1,6 @@
 {
   "name": "dpix-suite",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "dpix - Image compression and optimization for everyone",
   "private": true,
   "workspaces": [
