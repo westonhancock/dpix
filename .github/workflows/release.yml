@@ -52,41 +52,47 @@ jobs:
 
           Image optimization for everyone - CLI, menu bar app, and Quick Actions for macOS.
 
-          ### Installation
+          ### 📦 Installation
 
-          **For most users:**
-          1. Download `dpix-installer-arm64.dmg` below
-          2. Open the DMG and drag dpix.app to Applications
-          3. Double-click "Install Quick Action.command"
-          4. Done!
+          **CLI (Recommended)**
+          ```bash
+          npm install -g dpix
+          ```
+
+          **Menu Bar App**
+          1. Download the appropriate DMG below:
+             - **Apple Silicon (M1/M2/M3)**: `dpix-{version}-arm64.dmg`
+             - **Intel Macs**: `dpix-{version}-x64.dmg`
+          2. Open DMG and drag dpix.app to Applications
+          3. **⚠️ First launch:** Right-click dpix.app → Open → Open (bypasses Gatekeeper)
+
+          > **Note:** This app is not yet code-signed. macOS Gatekeeper will block it on first launch. See the [Installation Guide](https://github.com/westonhancock/dpix/blob/main/INSTALLATION.md) for detailed bypass instructions.
 
           ### What's Included
 
           - **Menu Bar App** - Drag & drop interface with global hotkey (Cmd+Shift+O)
-          - **Quick Action** - Right-click any image → "Optimize Image"
+          - **Quick Action** - Right-click any image → "Optimize Image" (requires manual installation)
           - **CLI Tool** - Command line interface for automation
 
-          ### Features
+          ### ✨ Features
 
           - Resize images by width, height, or both
-          - Adjust quality (1-100)
-          - Convert to modern formats (WebP, AVIF) or traditional formats (JPG, PNG, GIF, TIFF)
+          - Adjust quality (1-100) with intelligent defaults
+          - Convert to modern formats (WebP, AVIF, HEIC) or traditional (JPG, PNG, GIF, TIFF)
+          - Real-time progress indicators
           - Batch processing support
-          - Intelligent defaults optimized for each format
+          - Drag & drop interface
+
+          ### 📚 Documentation
+
+          - **[Installation Guide](https://github.com/westonhancock/dpix/blob/main/INSTALLATION.md)** - Detailed installation and troubleshooting
+          - [README](https://github.com/westonhancock/dpix/blob/main/README.md) - Project overview
+          - [Roadmap](https://github.com/westonhancock/dpix/blob/main/ROADMAP.md) - Upcoming features
 
           ### Requirements
 
-          - macOS 11.0 or later (Apple Silicon recommended)
-          - For CLI only: Node.js >= 18.0.0
-
-          ### Documentation
-
-          - [Usage Guide](https://github.com/westonhancock/dpix/blob/main/USAGE.md)
-          - [README](https://github.com/westonhancock/dpix/blob/main/README.md)
-
-          ---
-
-          **First time installing?** See the [Installation Guide](https://github.com/westonhancock/dpix/blob/main/USAGE.md#installation) for detailed instructions.
+          - macOS 11.0 or later
+          - For CLI: Node.js >= 18.0.0
           EOF
 
       - name: Create GitHub Release
