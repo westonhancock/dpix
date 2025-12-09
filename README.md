@@ -50,7 +50,13 @@ npm install -g dpix
 
 1. Right-click any image in Finder
 2. Select "Quick Actions" → "Optimize Image"
-3. Optimized file appears in the same folder
+3. Choose your preferred format:
+   - **WebP (Recommended)** - Best balance of quality and size
+   - **AVIF (Smallest)** - Cutting-edge format with maximum compression
+   - **JPG (Compatible)** - Universal compatibility
+   - **PNG (Lossless)** - Preserves quality perfectly
+4. Set quality (1-100) or use the smart default
+5. Optimized file appears in the same folder
 
 ### Command Line
 

@@ -1,12 +1,9 @@
 #!/bin/bash
 
-# This script creates the macOS Quick Action workflow with interactive dialogs
+# This script creates the macOS Quick Action workflow
 
 WORKFLOW_DIR="Optimize Image.workflow"
 CONTENTS_DIR="$WORKFLOW_DIR/Contents"
-
-# Remove old workflow if it exists
-rm -rf "$WORKFLOW_DIR"
 
 # Create workflow directory structure
 mkdir -p "$CONTENTS_DIR"
@@ -51,15 +48,15 @@ cat > "$CONTENTS_DIR/Info.plist" << 'EOF'
 	<key>CFBundleName</key>
 	<string>Optimize Image</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.1</string>
+	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>1</string>
 </dict>
 </plist>
 EOF
 
-# Create document.wflow with interactive dialogs
-cat > "$CONTENTS_DIR/document.wflow" << 'EOFWORKFLOW'
+# Create document.wflow
+cat > "$CONTENTS_DIR/document.wflow" << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -121,8 +118,8 @@ cat > "$CONTENTS_DIR/document.wflow" << 'EOFWORKFLOW'
 					<key>COMMAND_STRING</key>
 					<string>#!/bin/bash
 
-# dpix Quick Action - Interactive Version
-# Optimizes images with user-selected format and quality
+# dpix Quick Action
+# Optimizes images using dpix CLI
 
 DPIX_BIN="/usr/local/bin/dpix"
 
@@ -132,103 +129,23 @@ if [ ! -f "$DPIX_BIN" ]; then
     exit 1
 fi
 
-# Show format selection dialog
-FORMAT_CHOICE=$(osascript << 'APPLESCRIPT'
-tell application "System Events"
-    set formatList to {"WebP (Recommended)", "AVIF (Smallest)", "JPG (Compatible)", "PNG (Lossless)"}
-    set chosenFormat to choose from list formatList with prompt "Select output format:" default items {"WebP (Recommended)"} with title "dpix Image Optimizer"
-    if chosenFormat is false then
-        return "cancelled"
-    else
-        return chosenFormat as text
-    end if
-end tell
-APPLESCRIPT
-)
-
-# Check if user cancelled
-if [ "$FORMAT_CHOICE" = "cancelled" ]; then
-    exit 0
-fi
-
-# Parse format choice and set defaults
-case "$FORMAT_CHOICE" in
-    "WebP (Recommended)")
-        FORMAT="webp"
-        DEFAULT_QUALITY="85"
-        ;;
-    "AVIF (Smallest)")
-        FORMAT="avif"
-        DEFAULT_QUALITY="75"
-        ;;
-    "JPG (Compatible)")
-        FORMAT="jpg"
-        DEFAULT_QUALITY="85"
-        ;;
-    "PNG (Lossless)")
-        FORMAT="png"
-        DEFAULT_QUALITY="90"
-        ;;
-    *)
-        FORMAT="webp"
-        DEFAULT_QUALITY="85"
-        ;;
-esac
-
-# Show quality selection dialog
-QUALITY=$(osascript << APPLESCRIPT
-tell application "System Events"
-    set qualityDialog to display dialog "Quality (1-100):" default answer "$DEFAULT_QUALITY" with title "dpix Image Optimizer" buttons {"Cancel", "Optimize"} default button "Optimize"
-    if button returned of qualityDialog is "Optimize" then
-        return text returned of qualityDialog
-    else
-        return "cancelled"
-    end if
-end tell
-APPLESCRIPT
-)
-
-# Check if user cancelled
-if [ "$QUALITY" = "cancelled" ]; then
-    exit 0
-fi
-
-# Validate quality value
-if ! [[ "$QUALITY" =~ ^[0-9]+$ ]] || [ "$QUALITY" -lt 1 ] || [ "$QUALITY" -gt 100 ]; then
-    osascript -e 'display notification "Invalid quality value. Using default." with title "dpix"'
-    QUALITY="$DEFAULT_QUALITY"
-fi
-
 # Process each file
-PROCESSED=0
-FAILED=0
-
 for file in "$@"; do
     if [ -f "$file" ]; then
         # Get the directory and filename
+        dir=$(dirname "$file")
         filename=$(basename "$file")
 
-        # Run dpix with selected settings
-        "$DPIX_BIN" "$file" -f "$FORMAT" -q "$QUALITY" --no-enlarge 2>&1
+        # Run dpix with default settings (webp, quality 85)
+        "$DPIX_BIN" "$file" -f webp -q 85 --no-enlarge
 
         if [ $? -eq 0 ]; then
-            PROCESSED=$((PROCESSED + 1))
+            osascript -e "display notification \"Optimized: $filename\" with title \"dpix\""
         else
-            FAILED=$((FAILED + 1))
+            osascript -e "display notification \"Failed to optimize: $filename\" with title \"dpix\""
         fi
     fi
 done
-
-# Show summary notification
-if [ $PROCESSED -gt 0 ]; then
-    if [ $FAILED -eq 0 ]; then
-        osascript -e "display notification \"Optimized $PROCESSED image(s) to $FORMAT at quality $QUALITY\" with title \"dpix\" sound name \"Glass\""
-    else
-        osascript -e "display notification \"Optimized $PROCESSED, failed $FAILED\" with title \"dpix\" sound name \"Glass\""
-    fi
-else
-    osascript -e 'display notification "No images were optimized" with title "dpix"'
-fi
 </string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
@@ -359,6 +276,6 @@ fi
 	</dict>
 </dict>
 </plist>
-EOFWORKFLOW
+EOF
 
-echo "Interactive workflow created successfully: $WORKFLOW_DIR"
+echo "Workflow created successfully: $WORKFLOW_DIR"

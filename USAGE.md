@@ -55,14 +55,21 @@ cd packages/cli && npm link
 **Usage:**
 1. Right-click any image in Finder
 2. Select `Quick Actions` → `Optimize Image`
-3. Notification appears when complete
-4. Optimized file saved in the same folder
+3. **Choose format** from the dialog:
+   - **WebP (Recommended)** - Quality 85, best balance
+   - **AVIF (Smallest)** - Quality 75, maximum compression
+   - **JPG (Compatible)** - Quality 85, universal support
+   - **PNG (Lossless)** - Quality 90, perfect quality
+4. **Set quality** (1-100) or use the preset default
+5. Notification appears when complete
+6. Optimized file saved in the same folder
 
-**Default Settings:**
-- Format: WebP
-- Quality: 85%
+**Features:**
+- Interactive dialogs for format and quality selection
+- Smart defaults for each format
 - No resizing (maintains original dimensions)
 - Won't enlarge small images
+- Shows summary of processed images
 
 **Keyboard Shortcut (Optional):**
 1. Open `System Preferences` → `Keyboard` → `Shortcuts`
