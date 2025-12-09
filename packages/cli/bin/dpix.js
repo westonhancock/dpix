@@ -27,7 +27,7 @@ program
   .option('-w, --width <number>', 'Resize width (maintains aspect ratio if height not specified)', parseInt)
   .option('-h, --height <number>', 'Resize height (maintains aspect ratio if width not specified)', parseInt)
   .option('-q, --quality <number>', 'Quality (1-100, default varies by format)', parseInt)
-  .option('-f, --format <format>', 'Output format (jpg, jpeg, png, webp, avif, gif, tiff)', 'webp')
+  .option('-f, --format <format>', 'Output format (jpg, jpeg, png, webp, avif, gif, tiff, heic, heif)', 'webp')
   .option('--fit <fit>', 'How to fit the image (cover, contain, fill, inside, outside)', 'cover')
   .option('--no-enlarge', 'Do not enlarge images smaller than the specified dimensions')
   .action(async (input, options) => {

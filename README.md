@@ -14,10 +14,11 @@ dpix is a comprehensive image optimization toolkit that provides three ways to c
 
 - **Resize** images by width, height, or both
 - **Adjust quality** for optimal file size (1-100)
-- **Convert** to modern web formats (WebP, AVIF) or traditional formats (JPG, PNG, GIF, TIFF)
+- **Convert** to modern web formats (WebP, AVIF, HEIC) or traditional formats (JPG, PNG, GIF, TIFF)
+- **HEIC/HEIF support** - Convert iPhone photos and other HEIC images
 - **Intelligent defaults** optimized for each format
 - **Batch processing** support
-- **Beautiful interface** with progress indicators
+- **Beautiful interface** with real-time progress indicators
 
 ## Installation
 

@@ -6,4 +6,10 @@ contextBridge.exposeInMainWorld('dpix', {
   selectFile: () => ipcRenderer.invoke('select-file'),
   selectOutputDir: () => ipcRenderer.invoke('select-output-dir'),
   processImages: (files, options) => ipcRenderer.invoke('process-images', files, options),
+  onProgress: (callback) => {
+    ipcRenderer.on('processing-progress', (event, data) => callback(data));
+  },
+  removeProgressListener: () => {
+    ipcRenderer.removeAllListeners('processing-progress');
+  }
 });

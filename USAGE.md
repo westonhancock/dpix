@@ -36,10 +36,11 @@ cd packages/cli && npm link
 **Features:**
 - Drag & drop images
 - Adjust quality (1-100)
-- Choose output format (WebP, AVIF, JPG, PNG, GIF)
+- Choose output format (WebP, AVIF, HEIC, JPG, PNG, GIF)
 - Resize images (width, height, or both)
-- Batch processing
+- Batch processing with real-time progress indicators
 - Custom output location
+- Support for HEIC/HEIF files (iPhone photos)
 
 **Global Hotkey:** Press `Cmd+Shift+O` anywhere to show/hide the dpix window
 
@@ -128,7 +129,7 @@ Options:
   -w, --width <number>    Resize width (maintains aspect if no height)
   -h, --height <number>   Resize height (maintains aspect if no width)
   -q, --quality <number>  Quality 1-100 (default varies by format)
-  -f, --format <format>   Output format: jpg, png, webp, avif, gif, tiff
+  -f, --format <format>   Output format: jpg, png, webp, avif, heic, heif, gif, tiff
   --fit <fit>             Resize fit: cover, contain, fill, inside, outside
   --no-enlarge            Don't enlarge images smaller than specified
   --help                  Show help
@@ -148,6 +149,13 @@ Options:
 - **Pros:** Better compression than WebP
 - **Cons:** Less browser support (modern browsers only)
 - **Use when:** Targeting modern browsers, want smallest files
+
+### HEIC/HEIF
+- **Best for:** iPhone photos, modern image storage
+- **Quality:** 75-85 recommended
+- **Pros:** Excellent compression, supports transparency
+- **Cons:** Limited software support outside Apple ecosystem
+- **Use when:** Storing photos, converting iPhone images to web formats
 
 ### JPG
 - **Best for:** Photos, complex images

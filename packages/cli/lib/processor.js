@@ -137,6 +137,8 @@ function applyFormatOptions(image, format, quality) {
     avif: 65,
     gif: 100,
     tiff: 80,
+    heic: 75,
+    heif: 75,
   };
 
   const q = quality || defaultQuality[format] || 80;
@@ -178,6 +180,13 @@ function applyFormatOptions(image, format, quality) {
       return image.tiff({
         quality: q,
         compression: 'lzw',
+      });
+
+    case 'heic':
+    case 'heif':
+      return image.heif({
+        quality: q,
+        compression: 'hevc',
       });
 
     default:
