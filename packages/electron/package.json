@@ -37,9 +37,11 @@
   "author": "Weston Hancock <weston.e.hancock@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "electron": "^34.5.8",
-    "electron-builder": "^26.0.12",
     "menubar": "^9.5.2",
     "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "electron": "^34.5.8",
+    "electron-builder": "^26.0.12"
   }
 }
