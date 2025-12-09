@@ -59,18 +59,23 @@ app.whenReady().then(() => {
 
   mb.on('after-create-window', () => {
     console.log('Window created');
-    // Always open dev tools for debugging
-    mb.window.webContents.openDevTools({ mode: 'detach' });
+
+    // Open dev tools only in development mode
+    if (process.env.NODE_ENV === 'development') {
+      mb.window.webContents.openDevTools({ mode: 'detach' });
+    }
 
     // Log when page finishes loading
     mb.window.webContents.on('did-finish-load', () => {
       console.log('Page finished loading');
     });
 
-    // Log any console messages from renderer
-    mb.window.webContents.on('console-message', (event, level, message) => {
-      console.log(`Renderer console: ${message}`);
-    });
+    // Log any console messages from renderer (development only)
+    if (process.env.NODE_ENV === 'development') {
+      mb.window.webContents.on('console-message', (event, level, message) => {
+        console.log(`Renderer console: ${message}`);
+      });
+    }
   });
 });
 
@@ -81,12 +86,22 @@ app.on('will-quit', () => {
 
 // Handle file selection
 ipcMain.handle('select-file', async () => {
-  const result = await dialog.showOpenDialog({
+  // Keep window visible while dialog is open
+  if (mb && mb.window) {
+    mb.window.setAlwaysOnTop(true, 'floating');
+  }
+
+  const result = await dialog.showOpenDialog(mb.window, {
     properties: ['openFile', 'multiSelections'],
     filters: [
       { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'tiff', 'heic', 'heif'] }
     ]
   });
+
+  // Restore normal behavior after dialog closes
+  if (mb && mb.window) {
+    mb.window.setAlwaysOnTop(false);
+  }
 
   if (!result.canceled && result.filePaths.length > 0) {
     return result.filePaths;
@@ -96,9 +111,19 @@ ipcMain.handle('select-file', async () => {
 
 // Handle output directory selection
 ipcMain.handle('select-output-dir', async () => {
-  const result = await dialog.showOpenDialog({
+  // Keep window visible while dialog is open
+  if (mb && mb.window) {
+    mb.window.setAlwaysOnTop(true, 'floating');
+  }
+
+  const result = await dialog.showOpenDialog(mb.window, {
     properties: ['openDirectory']
   });
+
+  // Restore normal behavior after dialog closes
+  if (mb && mb.window) {
+    mb.window.setAlwaysOnTop(false);
+  }
 
   if (!result.canceled && result.filePaths.length > 0) {
     return result.filePaths[0];
