@@ -1,6 +1,6 @@
 {
   "name": "dpix-electron",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "dpix menu bar app for macOS",
   "main": "src/main.js",
   "scripts": {
