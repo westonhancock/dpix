@@ -32,6 +32,8 @@ app.whenReady().then(() => {
         contextIsolation: true,
         nodeIntegration: false,
         backgroundThrottling: false,
+        enableRemoteModule: false,
+        webSecurity: true,
       },
     },
     preloadWindow: true,
