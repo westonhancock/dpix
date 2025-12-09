@@ -88,6 +88,46 @@ ipcMain.handle('select-output-dir', async () => {
 
 // Handle image processing
 ipcMain.handle('process-images', async (event, files, options) => {
+  // Validate inputs
+  if (!Array.isArray(files) || files.length === 0) {
+    throw new Error('Invalid files array');
+  }
+
+  // Validate file paths and extensions
+  const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.tiff'];
+  for (const filePath of files) {
+    if (typeof filePath !== 'string') {
+      throw new Error('Invalid file path');
+    }
+
+    const ext = path.extname(filePath).toLowerCase();
+    if (!validExtensions.includes(ext)) {
+      throw new Error(`Unsupported file type: ${ext}`);
+    }
+
+    if (!existsSync(filePath)) {
+      throw new Error(`File not found: ${filePath}`);
+    }
+  }
+
+  // Validate options
+  if (options.quality && (typeof options.quality !== 'number' || options.quality < 1 || options.quality > 100)) {
+    throw new Error('Quality must be a number between 1 and 100');
+  }
+
+  if (options.width && (typeof options.width !== 'number' || options.width < 1)) {
+    throw new Error('Width must be a positive number');
+  }
+
+  if (options.height && (typeof options.height !== 'number' || options.height < 1)) {
+    throw new Error('Height must be a positive number');
+  }
+
+  const validFormats = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'tiff'];
+  if (options.format && !validFormats.includes(options.format.toLowerCase())) {
+    throw new Error(`Invalid format: ${options.format}`);
+  }
+
   const results = [];
 
   for (const filePath of files) {
@@ -156,9 +196,12 @@ async function processImage(inputPath, options) {
 
 function generateOutputPath(inputPath, options) {
   if (options.outputDir) {
+    // Normalize and resolve the output directory to prevent path traversal
+    const normalizedOutputDir = path.normalize(path.resolve(options.outputDir));
+
     const fileName = path.basename(inputPath, path.extname(inputPath));
     const format = options.format || 'webp';
-    return path.join(options.outputDir, `${fileName}-compressed.${format}`);
+    return path.join(normalizedOutputDir, `${fileName}-compressed.${format}`);
   }
 
   const dir = path.dirname(inputPath);

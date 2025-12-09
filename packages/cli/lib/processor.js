@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 import { existsSync, statSync } from 'fs';
-import { extname, dirname, basename, join } from 'path';
+import { extname, dirname, basename, join, resolve, normalize, isAbsolute } from 'path';
 import ora from 'ora';
 
 /**
@@ -94,7 +94,23 @@ export async function processImage(inputPath, options) {
  */
 function generateOutputPath(inputPath, options) {
   if (options.output) {
-    return options.output;
+    // Normalize and resolve the output path to prevent path traversal
+    const normalizedOutput = normalize(resolve(options.output));
+
+    // If it's not an absolute path, make sure it's relative to input directory
+    if (!isAbsolute(options.output)) {
+      const inputDir = dirname(resolve(inputPath));
+      const outputResolved = resolve(inputDir, options.output);
+
+      // Ensure the output is within or is the input directory (prevents ../../../etc/passwd)
+      if (!outputResolved.startsWith(inputDir)) {
+        throw new Error('Output path must be within the input directory or use an absolute path');
+      }
+
+      return outputResolved;
+    }
+
+    return normalizedOutput;
   }
 
   const dir = dirname(inputPath);
