@@ -12,6 +12,7 @@
   "build": {
     "appId": "com.westonhancock.dpix",
     "productName": "dpix",
+    "npmRebuild": false,
     "mac": {
       "category": "public.app-category.graphics-design",
       "icon": "assets/icon.png",
@@ -41,7 +42,7 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
-    "electron": "^34.5.8",
+    "electron": "34.5.8",
     "electron-builder": "^26.0.12"
   }
 }
