@@ -124,10 +124,16 @@ cat > "$CONTENTS_DIR/document.wflow" << 'EOFWORKFLOW'
 # dpix Quick Action - Interactive Version
 # Optimizes images with user-selected format and quality
 
-DPIX_BIN="/usr/local/bin/dpix"
+# Find dpix binary (try common locations)
+DPIX_BIN=""
+if command -v dpix &> /dev/null; then
+    DPIX_BIN=$(command -v dpix)
+elif [ -f "/usr/local/bin/dpix" ]; then
+    DPIX_BIN="/usr/local/bin/dpix"
+fi
 
 # Check if dpix is installed
-if [ ! -f "$DPIX_BIN" ]; then
+if [ -z "$DPIX_BIN" ] || [ ! -f "$DPIX_BIN" ]; then
     osascript -e 'display notification "dpix is not installed. Please install dpix first." with title "dpix Quick Action"'
     exit 1
 fi
