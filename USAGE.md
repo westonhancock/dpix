@@ -6,7 +6,7 @@ Complete guide to using dpix for image optimization.
 
 ### End Users (Recommended)
 
-1. Download `dpix-installer-arm64.dmg` from [Releases](https://github.com/westonhancock/dpix-cli/releases)
+1. Download `dpix-installer-arm64.dmg` from [Releases](https://github.com/westonhancock/dpix/releases)
 2. Open the DMG
 3. Drag `dpix.app` to your Applications folder
 4. Double-click `Install Quick Action.command`
@@ -17,8 +17,8 @@ Complete guide to using dpix for image optimization.
 
 ```bash
 # Clone the repository
-git clone https://github.com/westonhancock/dpix-cli.git
-cd dpix-cli
+git clone https://github.com/westonhancock/dpix.git
+cd dpix
 
 # Install dependencies
 npm run install:all
@@ -333,8 +333,8 @@ dpix photo.jpg -w 1200 -h 675 --fit cover -q 85 -o twitter.jpg
 
 ## Support
 
-- **Issues:** https://github.com/westonhancock/dpix-cli/issues
-- **Documentation:** https://github.com/westonhancock/dpix-cli
+- **Issues:** https://github.com/westonhancock/dpix/issues
+- **Documentation:** https://github.com/westonhancock/dpix
 
 ## License
 

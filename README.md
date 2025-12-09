@@ -23,7 +23,7 @@ dpix is a comprehensive image optimization toolkit that provides three ways to c
 
 ### Option 1: Download Installer (Recommended for most users)
 
-1. Download `dpix-installer.dmg` from [Releases](https://github.com/westonhancock/dpix-cli/releases)
+1. Download `dpix-installer.dmg` from [Releases](https://github.com/westonhancock/dpix/releases)
 2. Double-click to mount
 3. Drag `dpix.app` to Applications
 4. Double-click "Install Quick Action" to enable right-click optimization
