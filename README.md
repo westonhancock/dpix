@@ -84,8 +84,18 @@ dpix-suite/
 ## Development
 
 ```bash
+# Clone the repository
+git clone https://github.com/westonhancock/dpix.git
+cd dpix
+
 # Install dependencies for all packages
 npm run install:all
+
+# Link CLI for local development
+cd packages/cli && npm link
+
+# Run Electron app in development mode
+cd packages/electron && npm start
 
 # Build standalone binary
 npm run build:binary
@@ -96,6 +106,21 @@ npm run build:electron
 # Build complete installer
 npm run build:all
 ```
+
+## Releasing
+
+dpix uses GitHub Actions for automated releases. See [RELEASING.md](./RELEASING.md) for detailed instructions.
+
+**Quick release:**
+```bash
+# Create a patch release (1.0.0 -> 1.0.1)
+./scripts/release.sh patch
+
+# Push to trigger automated build
+git push origin main --tags
+```
+
+GitHub Actions will automatically build and publish the release.
 
 ## Requirements
 

@@ -1,0 +1,110 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Install CLI dependencies
+        run: cd packages/cli && npm install
+
+      - name: Install Electron dependencies
+        run: cd packages/electron && npm install
+
+      - name: Build standalone binaries
+        run: npm run build:binary
+
+      - name: Build Electron app
+        run: npm run build:electron
+
+      - name: Create .dmg installer
+        run: npm run build:dmg
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          cat > release-notes.md << 'EOF'
+          ## dpix v${{ steps.version.outputs.VERSION }}
+
+          Image optimization for everyone - CLI, menu bar app, and Quick Actions for macOS.
+
+          ### Installation
+
+          **For most users:**
+          1. Download `dpix-installer-arm64.dmg` below
+          2. Open the DMG and drag dpix.app to Applications
+          3. Double-click "Install Quick Action.command"
+          4. Done!
+
+          ### What's Included
+
+          - **Menu Bar App** - Drag & drop interface with global hotkey (Cmd+Shift+O)
+          - **Quick Action** - Right-click any image → "Optimize Image"
+          - **CLI Tool** - Command line interface for automation
+
+          ### Features
+
+          - Resize images by width, height, or both
+          - Adjust quality (1-100)
+          - Convert to modern formats (WebP, AVIF) or traditional formats (JPG, PNG, GIF, TIFF)
+          - Batch processing support
+          - Intelligent defaults optimized for each format
+
+          ### Requirements
+
+          - macOS 11.0 or later (Apple Silicon recommended)
+          - For CLI only: Node.js >= 18.0.0
+
+          ### Documentation
+
+          - [Usage Guide](https://github.com/westonhancock/dpix/blob/main/USAGE.md)
+          - [README](https://github.com/westonhancock/dpix/blob/main/README.md)
+
+          ---
+
+          **First time installing?** See the [Installation Guide](https://github.com/westonhancock/dpix/blob/main/USAGE.md#installation) for detailed instructions.
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: dpix v${{ steps.version.outputs.VERSION }}
+          body_path: release-notes.md
+          files: |
+            dist/dpix-installer-arm64.dmg
+            dist/dpix-macos-arm64
+            dist/dpix-macos-x64
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dpix-v${{ steps.version.outputs.VERSION }}
+          path: |
+            dist/dpix-installer-arm64.dmg
+            dist/dpix-macos-arm64
+            dist/dpix-macos-x64
