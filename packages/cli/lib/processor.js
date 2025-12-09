@@ -92,7 +92,7 @@ export async function processImage(inputPath, options) {
  * @param {object} options - Options object
  * @returns {string} - Output file path
  */
-function generateOutputPath(inputPath, options) {
+export function generateOutputPath(inputPath, options) {
   if (options.output) {
     // Normalize and resolve the output path to prevent path traversal
     const normalizedOutput = normalize(resolve(options.output));
@@ -128,7 +128,7 @@ function generateOutputPath(inputPath, options) {
  * @param {number} quality - Quality setting
  * @returns {Sharp} - Sharp instance with format applied
  */
-function applyFormatOptions(image, format, quality) {
+export function applyFormatOptions(image, format, quality) {
   const defaultQuality = {
     jpg: 80,
     jpeg: 80,
@@ -199,7 +199,7 @@ function applyFormatOptions(image, format, quality) {
  * @param {number} bytes - Bytes
  * @returns {string} - Formatted string
  */
-function formatBytes(bytes) {
+export function formatBytes(bytes) {
   if (bytes === 0) return '0 B';
 
   const k = 1024;
