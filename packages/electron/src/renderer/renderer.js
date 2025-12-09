@@ -1,6 +1,17 @@
 let selectedFiles = [];
 let outputDirectory = null;
 
+// Prevent default drag behavior on document
+document.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+});
+
+document.addEventListener('drop', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+});
+
 // DOM elements
 const dropZone = document.getElementById('dropZone');
 const filesList = document.getElementById('filesList');
@@ -50,18 +61,32 @@ selectOutputBtn.addEventListener('click', async () => {
 // Drag and drop
 dropZone.addEventListener('dragover', (e) => {
   e.preventDefault();
+  e.stopPropagation();
   dropZone.classList.add('drag-over');
 });
 
-dropZone.addEventListener('dragleave', () => {
-  dropZone.classList.remove('drag-over');
+dropZone.addEventListener('dragenter', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  dropZone.classList.add('drag-over');
+});
+
+dropZone.addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  // Only remove if leaving the dropZone itself, not child elements
+  if (e.target === dropZone) {
+    dropZone.classList.remove('drag-over');
+  }
 });
 
 dropZone.addEventListener('drop', (e) => {
   e.preventDefault();
+  e.stopPropagation();
   dropZone.classList.remove('drag-over');
 
   const files = Array.from(e.dataTransfer.files).map(f => f.path);
+  console.log('Files dropped:', files);
   addFiles(files);
 });
 
