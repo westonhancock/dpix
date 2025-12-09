@@ -1,15 +1,17 @@
 let selectedFiles = [];
 let outputDirectory = null;
 
-// Prevent default drag behavior on document
+// Prevent default drag behavior on document (but allow events to bubble to dropZone)
 document.addEventListener('dragover', (e) => {
   e.preventDefault();
-  e.stopPropagation();
+  console.log('Document dragover');
 });
 
 document.addEventListener('drop', (e) => {
+  // Only prevent default to stop file from opening
+  // Don't stop propagation so dropZone can handle it
   e.preventDefault();
-  e.stopPropagation();
+  console.log('Document drop');
 });
 
 // DOM elements
@@ -85,7 +87,12 @@ dropZone.addEventListener('drop', (e) => {
   e.stopPropagation();
   dropZone.classList.remove('drag-over');
 
-  const files = Array.from(e.dataTransfer.files).map(f => f.path);
+  console.log('Drop event on dropZone!', e.dataTransfer.files);
+  const files = Array.from(e.dataTransfer.files).map(f => {
+    const path = window.dpix.getPathForFile(f);
+    console.log('File object:', f, 'Path:', path);
+    return path;
+  });
   console.log('Files dropped:', files);
   addFiles(files);
 });
