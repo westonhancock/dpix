@@ -64,7 +64,7 @@ ipcMain.handle('select-file', async () => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile', 'multiSelections'],
     filters: [
-      { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'tiff'] }
+      { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'tiff', 'heic', 'heif'] }
     ]
   });
 
@@ -94,7 +94,7 @@ ipcMain.handle('process-images', async (event, files, options) => {
   }
 
   // Validate file paths and extensions
-  const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.tiff'];
+  const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.tiff', '.heic', '.heif'];
   for (const filePath of files) {
     if (typeof filePath !== 'string') {
       throw new Error('Invalid file path');
@@ -123,16 +123,32 @@ ipcMain.handle('process-images', async (event, files, options) => {
     throw new Error('Height must be a positive number');
   }
 
-  const validFormats = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'tiff'];
+  const validFormats = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'tiff', 'heic', 'heif'];
   if (options.format && !validFormats.includes(options.format.toLowerCase())) {
     throw new Error(`Invalid format: ${options.format}`);
   }
 
   const results = [];
+  const totalFiles = files.length;
 
-  for (const filePath of files) {
+  for (let i = 0; i < files.length; i++) {
+    const filePath = files[i];
+    const fileIndex = i;
+
     try {
-      const result = await processImage(filePath, options);
+      // Progress callback for individual file
+      const onProgress = (fileProgress) => {
+        const overallProgress = ((fileIndex + fileProgress / 100) / totalFiles) * 100;
+        event.sender.send('processing-progress', {
+          fileIndex,
+          fileProgress,
+          overallProgress: Math.round(overallProgress),
+          currentFile: path.basename(filePath),
+          totalFiles
+        });
+      };
+
+      const result = await processImage(filePath, options, onProgress);
       results.push({ success: true, ...result });
     } catch (error) {
       results.push({
@@ -147,18 +163,24 @@ ipcMain.handle('process-images', async (event, files, options) => {
 });
 
 // Image processing function (same logic as CLI)
-async function processImage(inputPath, options) {
+async function processImage(inputPath, options, onProgress = null) {
   if (!existsSync(inputPath)) {
     throw new Error(`File not found: ${inputPath}`);
   }
+
+  if (onProgress) onProgress(0);
 
   const originalStats = statSync(inputPath);
   const originalSize = originalStats.size;
 
   const outputPath = generateOutputPath(inputPath, options);
 
+  if (onProgress) onProgress(20);
+
   let image = sharp(inputPath);
   const metadata = await image.metadata();
+
+  if (onProgress) onProgress(40);
 
   if (options.width || options.height) {
     image = image.resize({
@@ -169,16 +191,24 @@ async function processImage(inputPath, options) {
     });
   }
 
+  if (onProgress) onProgress(60);
+
   const format = options.format || 'webp';
   image = applyFormatOptions(image, format, options.quality);
 
+  if (onProgress) onProgress(80);
+
   await image.toFile(outputPath);
+
+  if (onProgress) onProgress(90);
 
   const newStats = statSync(outputPath);
   const newSize = newStats.size;
   const newMetadata = await sharp(outputPath).metadata();
 
   const savings = ((1 - newSize / originalSize) * 100).toFixed(1);
+
+  if (onProgress) onProgress(100);
 
   return {
     inputPath,
@@ -221,6 +251,8 @@ function applyFormatOptions(image, format, quality) {
     avif: 65,
     gif: 100,
     tiff: 80,
+    heic: 75,
+    heif: 75,
   };
 
   const q = quality || defaultQuality[format] || 80;
@@ -239,6 +271,9 @@ function applyFormatOptions(image, format, quality) {
       return image.gif({ effort: 10 });
     case 'tiff':
       return image.tiff({ quality: q, compression: 'lzw' });
+    case 'heic':
+    case 'heif':
+      return image.heif({ quality: q, compression: 'hevc' });
     default:
       throw new Error(`Unsupported format: ${format}`);
   }

@@ -74,7 +74,7 @@ dropZone.addEventListener('click', (e) => {
 
 // Add files to list
 function addFiles(files) {
-  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.tiff'];
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.tiff', '.heic', '.heif'];
   const imageFiles = files.filter(f =>
     imageExtensions.some(ext => f.toLowerCase().endsWith(ext))
   );
@@ -123,6 +123,41 @@ optimizeBtn.addEventListener('click', async () => {
   optimizeBtn.textContent = 'Processing...';
   resultsDiv.innerHTML = '';
 
+  // Show progress bar
+  resultsDiv.innerHTML = `
+    <div class="progress-container">
+      <div class="progress-text">Processing: <span id="currentFileName">Starting...</span></div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <div class="progress-stats">
+        <span id="progressPercentage">0%</span>
+        <span id="progressFiles">(0 of ${selectedFiles.length})</span>
+      </div>
+    </div>
+  `;
+
+  // Set up progress listener
+  window.dpix.onProgress((progress) => {
+    const progressFill = document.getElementById('progressFill');
+    const progressPercentage = document.getElementById('progressPercentage');
+    const progressFiles = document.getElementById('progressFiles');
+    const currentFileName = document.getElementById('currentFileName');
+
+    if (progressFill) {
+      progressFill.style.width = `${progress.overallProgress}%`;
+    }
+    if (progressPercentage) {
+      progressPercentage.textContent = `${progress.overallProgress}%`;
+    }
+    if (progressFiles) {
+      progressFiles.textContent = `(${progress.fileIndex + 1} of ${progress.totalFiles})`;
+    }
+    if (currentFileName) {
+      currentFileName.textContent = progress.currentFile;
+    }
+  });
+
   // Gather options
   const options = {
     format: formatSelect.value,
@@ -134,6 +169,9 @@ optimizeBtn.addEventListener('click', async () => {
 
   try {
     const results = await window.dpix.processImages(selectedFiles, options);
+
+    // Remove progress listener
+    window.dpix.removeProgressListener();
 
     // Display results
     resultsDiv.innerHTML = results.map(result => {
@@ -161,6 +199,9 @@ optimizeBtn.addEventListener('click', async () => {
     selectedFiles = [];
     renderFilesList();
   } catch (error) {
+    // Remove progress listener
+    window.dpix.removeProgressListener();
+
     resultsDiv.innerHTML = `
       <div class="result-item error">
         <div class="result-file">Error</div>
