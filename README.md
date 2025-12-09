@@ -77,6 +77,15 @@ dpix photo.jpg -w 1920 -h 1080 -q 85 -f webp -o output.webp
 
 See [CLI Documentation](./packages/cli/README.md) for complete CLI options.
 
+## Roadmap
+
+Interested in what's coming next? Check out the [Roadmap](./ROADMAP.md) to see planned features including:
+- Preset profiles for common use cases
+- EXIF data management
+- Responsive image generation
+- Before/after preview
+- Cross-platform support (Windows & Linux)
+
 ## Project Structure
 
 ```
