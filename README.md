@@ -22,19 +22,37 @@ dpix is a comprehensive image optimization toolkit that provides three ways to c
 
 ## Installation
 
-### Option 1: Download Installer (Recommended for most users)
+> **📖 [Full Installation Guide](./INSTALLATION.md)** - Includes troubleshooting and Gatekeeper bypass instructions
 
-1. Download `dpix-installer.dmg` from [Releases](https://github.com/westonhancock/dpix/releases)
-2. Double-click to mount
-3. Drag `dpix.app` to Applications
-4. Double-click "Install Quick Action" to enable right-click optimization
-5. Done! Use from menu bar or right-click images
+### Quick Start
 
-### Option 2: CLI Only (For developers)
-
+**CLI (Recommended)**
 ```bash
 npm install -g dpix
 ```
+
+**Menu Bar App**
+1. Download the DMG from [Releases](https://github.com/westonhancock/dpix/releases)
+   - Apple Silicon (M1/M2/M3): `dpix-{version}-arm64.dmg`
+   - Intel Macs: `dpix-{version}-x64.dmg`
+2. Open DMG and drag dpix to Applications
+3. **First time:** Right-click dpix.app → Open → Open (bypasses Gatekeeper)
+4. Optional: Run the post-install script to remove quarantine:
+   ```bash
+   curl -O https://raw.githubusercontent.com/westonhancock/dpix/main/packages/electron/scripts/post-install.sh
+   chmod +x post-install.sh
+   ./post-install.sh
+   ```
+
+**Quick Action**
+```bash
+# From the dpix repository
+cd packages/workflows
+./create-workflow.sh
+cp -R "Optimize Image.workflow" ~/Library/Services/
+```
+
+> **Note:** The app is not yet code-signed. See [INSTALLATION.md](./INSTALLATION.md) for details on bypassing macOS Gatekeeper warnings.
 
 ## Usage
 
