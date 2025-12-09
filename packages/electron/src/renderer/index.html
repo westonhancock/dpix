@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dpix</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>dpix</h1>
+      <p class="subtitle">Image Optimizer</p>
+    </header>
+
+    <div class="drop-zone" id="dropZone">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      <p>Drop images here</p>
+      <p class="drop-hint">or</p>
+      <button id="selectBtn" class="btn-secondary">Select Files</button>
+    </div>
+
+    <div class="files-list" id="filesList"></div>
+
+    <div class="settings">
+      <div class="setting-group">
+        <label for="format">Format</label>
+        <select id="format">
+          <option value="webp" selected>WebP</option>
+          <option value="avif">AVIF</option>
+          <option value="jpg">JPG</option>
+          <option value="png">PNG</option>
+          <option value="gif">GIF</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <label for="quality">Quality: <span id="qualityValue">80</span></label>
+        <input type="range" id="quality" min="1" max="100" value="80">
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-group">
+          <label for="width">Width (px)</label>
+          <input type="number" id="width" placeholder="Auto">
+        </div>
+        <div class="setting-group">
+          <label for="height">Height (px)</label>
+          <input type="number" id="height" placeholder="Auto">
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label>
+          <input type="checkbox" id="outputDir">
+          Save to custom location
+        </label>
+        <button id="selectOutputBtn" class="btn-secondary btn-small" disabled>Choose Folder</button>
+        <div id="outputDirPath" class="output-path"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="optimizeBtn" class="btn-primary" disabled>Optimize Images</button>
+    </div>
+
+    <div class="results" id="results"></div>
+
+    <footer>
+      <p class="hotkey-hint">Press <kbd>Cmd+Shift+O</kbd> to toggle</p>
+    </footer>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

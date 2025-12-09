@@ -1,32 +1,24 @@
 {
-  "name": "dpix",
+  "name": "dpix-suite",
   "version": "1.0.0",
-  "description": "A CLI tool for compressing and optimizing images",
-  "type": "module",
-  "main": "index.js",
-  "bin": {
-    "dpix": "./bin/dpix.js"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "image",
-    "compression",
-    "resize",
-    "webp",
-    "cli",
-    "optimize"
+  "description": "dpix - Image compression and optimization for everyone",
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
+  "scripts": {
+    "install:cli": "cd packages/cli && npm install",
+    "install:electron": "cd packages/electron && npm install",
+    "install:all": "npm run install:cli && npm run install:electron",
+    "build:binary": "node installer/build-binary.js",
+    "build:electron": "cd packages/electron && npm run build",
+    "build:dmg": "node installer/build-dmg.js",
+    "build:all": "npm run build:binary && npm run build:electron && npm run build:dmg"
+  },
   "author": "Weston Hancock <weston.e.hancock@gmail.com>",
   "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "chalk": "^5.6.2",
-    "commander": "^14.0.2",
-    "ora": "^9.0.0",
-    "sharp": "^0.34.5"
+  "devDependencies": {
+    "create-dmg": "^7.1.0",
+    "pkg": "^5.8.1"
   }
 }

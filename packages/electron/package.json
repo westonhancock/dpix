@@ -1,0 +1,45 @@
+{
+  "name": "dpix-electron",
+  "version": "1.0.0",
+  "description": "dpix menu bar app for macOS",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --mac",
+    "build:arm64": "electron-builder --mac --arm64",
+    "build:x64": "electron-builder --mac --x64"
+  },
+  "build": {
+    "appId": "com.westonhancock.dpix",
+    "productName": "dpix",
+    "mac": {
+      "category": "public.app-category.graphics-design",
+      "icon": "assets/icon.png",
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ]
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "output": "out"
+    }
+  },
+  "author": "Weston Hancock <weston.e.hancock@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^34.5.8",
+    "electron-builder": "^26.0.12",
+    "menubar": "^9.5.2",
+    "sharp": "^0.34.5"
+  }
+}

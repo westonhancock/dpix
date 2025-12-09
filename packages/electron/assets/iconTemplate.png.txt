@@ -1,0 +1,10 @@
+This is a placeholder. For a real icon, you would need a 22x22px PNG with transparency.
+The icon should be a simple, monochrome design that works well in both light and dark menu bars.
+For macOS menu bar apps, use a template image (black with transparency).
+
+To create a proper icon:
+1. Design a 22x22px icon in black
+2. Save as PNG with transparency
+3. Name it iconTemplate.png (the "Template" suffix tells macOS to use it as a template)
+
+For now, we'll create a simple placeholder programmatically.

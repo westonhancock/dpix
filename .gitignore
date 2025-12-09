@@ -7,3 +7,17 @@ npm-debug.log*
 coverage/
 dist/
 build/
+out/
+
+# Electron
+packages/electron/out/
+*.dmg
+*.pkg
+
+# Binaries
+dpix-standalone
+dpix-macos-*
+
+# IDE
+.vscode/
+.idea/
