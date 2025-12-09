@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dpix - Image Optimization Toolkit for macOS</title>
+    <meta name="description" content="Compress, convert, and resize images with ease. CLI, Menu Bar, and Quick Actions for macOS.">
+    <meta name="keywords" content="image optimization, image compression, webp, avif, sharp, macos, cli tool">
+    <meta property="og:title" content="dpix - Image Optimization Toolkit">
+    <meta property="og:description" content="Compress, convert, and resize images with ease. Free for macOS.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --bg-tertiary: #18181b;
+            --bg-card: #1c1c1f;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #5F7FFF;
+            --accent-hover: #4a6be6;
+            --accent-glow: rgba(95, 127, 255, 0.15);
+            --green: #22c55e;
+            --orange: #f97316;
+            --purple: #a855f7;
+            --border: #27272a;
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(10, 10, 11, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .github-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .hero-badge .version {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 50%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(95, 127, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card);
+            border-color: var(--text-muted);
+        }
+
+        /* Install command */
+        .install-section {
+            margin-top: 60px;
+        }
+
+        .install-command {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+        }
+
+        .install-command .prompt {
+            color: var(--text-muted);
+        }
+
+        .install-command code {
+            color: var(--green);
+        }
+
+        .copy-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        /* Interfaces Section */
+        .interfaces {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+        }
+
+        h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-description {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .interfaces-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .interface-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            transition: all 0.3s;
+        }
+
+        .interface-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .interface-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .interface-card:nth-child(1) .interface-icon {
+            background: linear-gradient(135deg, #22c55e20, #22c55e10);
+            color: var(--green);
+        }
+
+        .interface-card:nth-child(2) .interface-icon {
+            background: linear-gradient(135deg, #5F7FFF20, #5F7FFF10);
+            color: var(--accent);
+        }
+
+        .interface-card:nth-child(3) .interface-icon {
+            background: linear-gradient(135deg, #a855f720, #a855f710);
+            color: var(--purple);
+        }
+
+        .interface-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .interface-card p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .interface-code {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+
+        .interface-code .comment {
+            color: var(--text-muted);
+        }
+
+        .interface-code .command {
+            color: var(--green);
+        }
+
+        .interface-code .flag {
+            color: var(--accent);
+        }
+
+        .interface-code .value {
+            color: var(--orange);
+        }
+
+        .keyboard-shortcut {
+            display: inline-flex;
+            gap: 4px;
+            margin-top: 16px;
+        }
+
+        .key {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Features */
+        .features {
+            padding: 100px 0;
+            background: var(--bg-secondary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+        }
+
+        .feature-card h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Formats */
+        .formats {
+            padding: 100px 0;
+        }
+
+        .formats-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .format-badge {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 16px 28px;
+            border-radius: var(--radius);
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .format-badge:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .format-badge .ext {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .format-badge .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .format-badge.recommended {
+            border-color: var(--green);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .format-badge.recommended .ext {
+            color: var(--green);
+        }
+
+        /* Quality Presets */
+        .quality-table {
+            max-width: 600px;
+            margin: 40px auto 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .quality-row {
+            display: grid;
+            grid-template-columns: 1fr 80px 1fr;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .quality-row:last-child {
+            border-bottom: none;
+        }
+
+        .quality-row.header {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .quality-format {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .quality-value {
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+        }
+
+        .quality-note {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        }
+
+        .cta h2 {
+            margin-bottom: 16px;
+        }
+
+        .cta p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 120px 0 60px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+
+            .install-command {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-badge, h1, .hero-description, .hero-buttons, .install-section {
+            animation: fadeIn 0.6s ease-out backwards;
+        }
+
+        h1 { animation-delay: 0.1s; }
+        .hero-description { animation-delay: 0.2s; }
+        .hero-buttons { animation-delay: 0.3s; }
+        .install-section { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#" class="logo">
+                <div class="logo-icon">⚡</div>
+                dpix
+            </a>
+            <div class="nav-links">
+                <a href="#interfaces">Interfaces</a>
+                <a href="#features">Features</a>
+                <a href="#formats">Formats</a>
+                <a href="https://github.com/westonhancock/dpix" class="github-link" target="_blank">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-badge">
+                    <span class="version">v1.0.1</span>
+                    Free & Open Source
+                </div>
+                <h1>Image optimization<br><span class="gradient-text">made ridiculously simple</span></h1>
+                <p class="hero-description">
+                    Compress, convert, and resize images with a CLI, menu bar app, or right-click.
+                    Powered by Sharp for blazing-fast performance.
+                </p>
+                <div class="hero-buttons">
+                    <a href="https://github.com/westonhancock/dpix/releases/latest" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download for macOS
+                    </a>
+                    <a href="https://github.com/westonhancock/dpix" class="btn btn-secondary" target="_blank">
+                        View on GitHub
+                    </a>
+                </div>
+
+                <div class="install-section">
+                    <div class="install-command">
+                        <span class="prompt">$</span>
+                        <code>npm install -g @nicepixels/dpix</code>
+                        <button class="copy-btn" onclick="copyCommand()" title="Copy to clipboard">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interfaces Section -->
+        <section class="interfaces" id="interfaces">
+            <div class="container">
+                <div class="section-header">
+                    <p class="section-label">Three Ways to Optimize</p>
+                    <h2>Choose your interface</h2>
+                    <p class="section-description">
+                        Whether you prefer the command line, a visual UI, or right-click convenience — we've got you covered.
+                    </p>
+                </div>
+
+                <div class="interfaces-grid">
+                    <div class="interface-card">
+                        <div class="interface-icon">⌨️</div>
+                        <h3>Command Line</h3>
+                        <p>Power users rejoice. Full control over every parameter with scriptable batch processing.</p>
+                        <div class="interface-code">
+                            <span class="comment"># Convert to WebP at 80% quality</span><br>
+                            <span class="command">dpix</span> image.png <span class="flag">-f</span> <span class="value">webp</span> <span class="flag">-q</span> <span class="value">80</span><br><br>
+                            <span class="comment"># Resize and compress</span><br>
+                            <span class="command">dpix</span> photo.jpg <span class="flag">-w</span> <span class="value">1920</span> <span class="flag">-f</span> <span class="value">avif</span>
+                        </div>
+                    </div>
+
+                    <div class="interface-card">
+                        <div class="interface-icon">🖥️</div>
+                        <h3>Menu Bar App</h3>
+                        <p>Drag and drop images into a sleek menu bar interface. See compression stats in real-time.</p>
+                        <div class="interface-code">
+                            <span class="comment">✓ Drag & drop zone</span><br>
+                            <span class="comment">✓ Format selector</span><br>
+                            <span class="comment">✓ Quality slider</span><br>
+                            <span class="comment">✓ Resize options</span><br>
+                            <span class="comment">✓ Compression stats</span>
+                        </div>
+                        <div class="keyboard-shortcut">
+                            <span class="key">⌘</span>
+                            <span class="key">⇧</span>
+                            <span class="key">O</span>
+                        </div>
+                    </div>
+
+                    <div class="interface-card">
+                        <div class="interface-icon">🖱️</div>
+                        <h3>Quick Action</h3>
+                        <p>Right-click any image in Finder and optimize instantly. Zero friction workflow.</p>
+                        <div class="interface-code">
+                            <span class="comment">1. Select image in Finder</span><br>
+                            <span class="comment">2. Right-click → Quick Actions</span><br>
+                            <span class="comment">3. Choose "Optimize Image"</span><br>
+                            <span class="comment">4. Configure in dialog</span><br>
+                            <span class="comment">5. Done! ✨</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <p class="section-label">Features</p>
+                    <h2>Everything you need</h2>
+                    <p class="section-description">
+                        Built on Sharp, the fastest Node.js image processing library. Handles millions of images daily in production.
+                    </p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h4>⚡ Blazing Fast</h4>
+                        <p>Powered by Sharp and libvips. Process large images in milliseconds, not seconds.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📦 Batch Processing</h4>
+                        <p>Process entire directories at once. Perfect for build pipelines and asset optimization.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🎯 Smart Defaults</h4>
+                        <p>Format-specific quality presets optimized for the best size-to-quality ratio.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📐 Aspect Ratio Lock</h4>
+                        <p>Resize by width, height, or both while preserving the original aspect ratio.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📊 Compression Stats</h4>
+                        <p>See exactly how much space you saved with before/after file size comparisons.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🔒 Secure</h4>
+                        <p>Path traversal prevention, input validation, and sandboxed Electron security.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formats Section -->
+        <section class="formats" id="formats">
+            <div class="container">
+                <div class="section-header">
+                    <p class="section-label">Formats</p>
+                    <h2>All the formats you need</h2>
+                    <p class="section-description">
+                        Convert between modern and legacy formats. WebP and AVIF recommended for web.
+                    </p>
+                </div>
+
+                <div class="formats-showcase">
+                    <div class="format-badge recommended">
+                        <span class="ext">.webp</span>
+                        <span class="label">Recommended</span>
+                    </div>
+                    <div class="format-badge recommended">
+                        <span class="ext">.avif</span>
+                        <span class="label">Best compression</span>
+                    </div>
+                    <div class="format-badge">
+                        <span class="ext">.jpg</span>
+                        <span class="label">Universal</span>
+                    </div>
+                    <div class="format-badge">
+                        <span class="ext">.png</span>
+                        <span class="label">Lossless</span>
+                    </div>
+                    <div class="format-badge">
+                        <span class="ext">.gif</span>
+                        <span class="label">Animated</span>
+                    </div>
+                    <div class="format-badge">
+                        <span class="ext">.tiff</span>
+                        <span class="label">Print</span>
+                    </div>
+                </div>
+
+                <div class="quality-table">
+                    <div class="quality-row header">
+                        <span>Format</span>
+                        <span>Default</span>
+                        <span>Best for</span>
+                    </div>
+                    <div class="quality-row">
+                        <span class="quality-format">WebP</span>
+                        <span class="quality-value">80</span>
+                        <span class="quality-note">Modern browsers, excellent quality</span>
+                    </div>
+                    <div class="quality-row">
+                        <span class="quality-format">AVIF</span>
+                        <span class="quality-value">65</span>
+                        <span class="quality-note">Maximum compression, HDR support</span>
+                    </div>
+                    <div class="quality-row">
+                        <span class="quality-format">JPG</span>
+                        <span class="quality-value">80</span>
+                        <span class="quality-note">Universal compatibility</span>
+                    </div>
+                    <div class="quality-row">
+                        <span class="quality-format">PNG</span>
+                        <span class="quality-value">80</span>
+                        <span class="quality-note">Transparency, lossless</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta">
+            <div class="container">
+                <h2>Ready to optimize?</h2>
+                <p>Download dpix for free and start compressing images like a pro.</p>
+                <div class="hero-buttons">
+                    <a href="https://github.com/westonhancock/dpix/releases/latest" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download for macOS
+                    </a>
+                    <a href="#" class="btn btn-secondary" onclick="document.querySelector('.install-command code').scrollIntoView({behavior: 'smooth'}); return false;">
+                        Install via npm
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://github.com/westonhancock/dpix">GitHub</a>
+                    <a href="https://github.com/westonhancock/dpix/issues">Issues</a>
+                    <a href="https://github.com/westonhancock/dpix/blob/main/LICENSE">MIT License</a>
+                    <a href="https://buymeacoffee.com/westonhancock">Buy Me a Coffee</a>
+                </div>
+                <p class="footer-copy">
+                    Made with ❤️ by <a href="https://github.com/westonhancock" style="color: var(--accent); text-decoration: none;">Weston Hancock</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Buy Me a Coffee Widget -->
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="westonhancock" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+
+    <script>
+        function copyCommand() {
+            navigator.clipboard.writeText('npm install -g @nicepixels/dpix');
+            const btn = document.querySelector('.copy-btn');
+            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+            setTimeout(() => {
+                btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+            }, 2000);
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
